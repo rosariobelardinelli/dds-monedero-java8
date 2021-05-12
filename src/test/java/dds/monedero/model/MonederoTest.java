@@ -8,11 +8,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MonederoTest {
   private Cuenta cuenta;
+  private Movimiento unMovimiento;
 
   @BeforeEach
   void init() {
@@ -69,4 +71,35 @@ public class MonederoTest {
     assertThrows(MontoNegativoException.class, () -> cuenta.sacar(-500));
   }
 
+  @Test
+  public void ElDineroExtraidoEs100() {
+    cuenta.poner(1500);
+    cuenta.sacar(10);
+    cuenta.sacar(80);
+    cuenta.sacar(10);
+    assertEquals(100, cuenta.getMontoExtraidoA(LocalDate.now()));
+  }
+
+  @Test
+  public void ElDineroExtraidoNoEs100(){
+    cuenta.poner(1500);
+    cuenta.sacar(10);
+    cuenta.sacar(100);
+    cuenta.sacar(10);
+    assertNotEquals(100, cuenta.getMontoExtraidoA(LocalDate.now()));
+  }
+
+  @Test
+  public void unMovimientoFueDepositado(){
+    unMovimiento = new Movimiento(LocalDate.now(), 100, true);
+    cuenta.agregarMovimiento(unMovimiento);
+    assertTrue(unMovimiento.fueDepositado(LocalDate.now()));
+  }
+
+  @Test
+  public void setUnMovimientoNoFueDepositado(){
+    unMovimiento = new Movimiento(LocalDate.now(), 100, true);
+    cuenta.agregarMovimiento(unMovimiento);
+    assertFalse(unMovimiento.fueDepositado(LocalDate.ofYearDay(2020, 5)));
+  }
 }
