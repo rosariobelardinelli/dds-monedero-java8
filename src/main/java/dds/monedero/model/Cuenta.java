@@ -22,6 +22,7 @@ public class Cuenta {
     this.validarSiSePuedePoner(cuanto);
     Movimiento movimiento = new Movimiento(LocalDate.now(), cuanto, true);
     this.agregarMovimiento(movimiento);
+    this.sumarSaldo(cuanto);
   }
 
   private void validarSiSePuedePoner(double cuanto) {
@@ -38,6 +39,7 @@ public class Cuenta {
     this.validarSiSePuedeSacar(cuanto);
     Movimiento movimiento = new Movimiento(LocalDate.now(), cuanto, false);
     this.agregarMovimiento(movimiento);
+    this.restarSaldo(cuanto);
   }
 
   private void validarSiSePuedeSacar(double cuanto) {
@@ -65,6 +67,14 @@ public class Cuenta {
         //reemplaza a !movimiento.isDeposito() && movimiento.getFecha().equals(fecha)
         .mapToDouble(Movimiento::getMonto)
         .sum();
+  }
+
+  public void sumarSaldo(double cuanto){
+    this.saldo += cuanto;
+  }
+
+  public void restarSaldo(double cuanto){
+    this.saldo -= cuanto;
   }
 
   public List<Movimiento> getMovimientos() {
